@@ -1,0 +1,1107 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Interview Prep Agent — Build your complete prep package</title>
+<style>
+  :root {
+    --navy: #0B2447;
+    --blue: #1565C0;
+    --teal: #00695C;
+    --green: #1B5E20;
+    --purple: #4527A0;
+    --amber: #E65100;
+    --red: #B71C1C;
+    --white: #FFFFFF;
+    --black: #0F1923;
+    --gray-50: #F8F9FA;
+    --gray-100: #F1F3F5;
+    --gray-200: #E9ECEF;
+    --gray-300: #DEE2E6;
+    --gray-400: #ADB5BD;
+    --gray-500: #6C757D;
+    --gray-700: #495057;
+    --accent: #1565C0;
+    --accent-light: #E3F2FD;
+    --success-light: #E8F5E9;
+    --success: #1B5E20;
+    --radius: 8px;
+    --radius-lg: 14px;
+    --shadow: 0 1px 3px rgba(0,0,0,0.08), 0 1px 2px rgba(0,0,0,0.06);
+    --shadow-md: 0 4px 12px rgba(0,0,0,0.08);
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    background: var(--gray-50);
+    color: var(--black);
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
+
+  /* ── Header ── */
+  .site-header {
+    width: 100%;
+    background: var(--navy);
+    padding: 1rem 2rem;
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+  }
+  .site-header .logo {
+    width: 36px; height: 36px;
+    background: var(--blue);
+    border-radius: var(--radius);
+    display: flex; align-items: center; justify-content: center;
+    font-size: 18px; color: white; font-weight: 700;
+  }
+  .site-header h1 { font-size: 16px; font-weight: 600; color: white; }
+  .site-header p { font-size: 13px; color: rgba(255,255,255,0.6); margin-top: 1px; }
+
+  /* ── Main layout ── */
+  .main {
+    width: 100%;
+    max-width: 780px;
+    padding: 2rem 1rem 4rem;
+  }
+
+  /* ── Progress ── */
+  .progress-wrap { margin-bottom: 2rem; }
+  .progress-header {
+    display: flex; justify-content: space-between; align-items: center;
+    margin-bottom: 8px;
+  }
+  .progress-label { font-size: 13px; font-weight: 600; color: var(--navy); }
+  .progress-count { font-size: 12px; color: var(--gray-500); }
+  .progress-bar { height: 4px; background: var(--gray-200); border-radius: 2px; overflow: hidden; }
+  .progress-fill { height: 100%; background: var(--blue); border-radius: 2px; transition: width 0.4s ease; }
+
+  /* ── Steps ── */
+  .step { display: none; }
+  .step.active { display: block; animation: fadeIn 0.2s ease; }
+  @keyframes fadeIn { from { opacity: 0; transform: translateY(6px); } to { opacity: 1; transform: translateY(0); } }
+
+  .step-badge {
+    display: inline-block;
+    font-size: 11px; font-weight: 600; color: var(--blue);
+    background: var(--accent-light);
+    border-radius: 20px; padding: 3px 10px;
+    text-transform: uppercase; letter-spacing: 0.06em;
+    margin-bottom: 0.75rem;
+  }
+  .step-title { font-size: 22px; font-weight: 700; color: var(--navy); margin-bottom: 0.4rem; }
+  .step-sub { font-size: 14px; color: var(--gray-500); line-height: 1.65; margin-bottom: 1.5rem; }
+
+  /* ── Form ── */
+  .field { margin-bottom: 1.1rem; }
+  label {
+    display: block; font-size: 13px; font-weight: 600;
+    color: var(--gray-700); margin-bottom: 5px;
+  }
+  label .opt { font-weight: 400; color: var(--gray-400); font-size: 12px; margin-left: 4px; }
+
+  input[type=text], input[type=email], select, textarea {
+    width: 100%;
+    border: 1.5px solid var(--gray-300);
+    border-radius: var(--radius);
+    background: white;
+    color: var(--black);
+    font-family: inherit;
+    font-size: 14px;
+    padding: 9px 13px;
+    transition: border-color 0.15s, box-shadow 0.15s;
+    outline: none;
+  }
+  input[type=text]:focus, input[type=email]:focus, select:focus, textarea:focus {
+    border-color: var(--blue);
+    box-shadow: 0 0 0 3px rgba(21,101,192,0.12);
+  }
+  textarea { resize: vertical; min-height: 80px; line-height: 1.6; }
+  select { cursor: pointer; }
+
+  .grid2 { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+  .grid2 .full { grid-column: 1 / -1; }
+
+  .err {
+    font-size: 12px; color: var(--red);
+    margin-top: 4px; display: none; align-items: center; gap: 4px;
+  }
+  .err.show { display: flex; }
+
+  /* ── Tags ── */
+  .tag-wrap { display: flex; flex-wrap: wrap; gap: 7px; margin-top: 6px; }
+  .tag {
+    padding: 5px 13px; border-radius: 20px; font-size: 13px;
+    cursor: pointer; border: 1.5px solid var(--gray-300);
+    background: white; color: var(--gray-700);
+    transition: all 0.15s; user-select: none;
+  }
+  .tag:hover { border-color: var(--blue); color: var(--blue); }
+  .tag.on { background: var(--accent-light); border-color: var(--blue); color: var(--blue); font-weight: 600; }
+
+  /* ── Cards (repeatable blocks) ── */
+  .block-card {
+    background: white; border: 1.5px solid var(--gray-200);
+    border-radius: var(--radius-lg); padding: 1.1rem;
+    margin-bottom: 0.9rem; box-shadow: var(--shadow);
+  }
+  .block-num {
+    font-size: 11px; font-weight: 700; color: var(--blue);
+    text-transform: uppercase; letter-spacing: 0.08em; margin-bottom: 0.75rem;
+    display: flex; align-items: center; gap: 8px;
+  }
+  .block-num::after {
+    content: ''; flex: 1; height: 1px; background: var(--gray-200);
+  }
+
+  .add-btn {
+    width: 100%; padding: 10px; border-radius: var(--radius);
+    border: 1.5px dashed var(--gray-300); background: transparent;
+    color: var(--gray-500); font-size: 13px; font-family: inherit;
+    cursor: pointer; transition: all 0.15s; margin-top: 4px;
+  }
+  .add-btn:hover { border-color: var(--blue); color: var(--blue); background: var(--accent-light); }
+
+  /* ── Culture preview ── */
+  .culture-box {
+    background: var(--accent-light); border: 1.5px solid #90CAF9;
+    border-radius: var(--radius); padding: 0.9rem 1rem;
+    margin-bottom: 1rem; font-size: 13px; color: var(--blue); line-height: 1.6;
+  }
+  .culture-principles {
+    background: white; border: 1.5px solid var(--gray-200);
+    border-radius: var(--radius); padding: 0.9rem 1rem; margin-top: 0.6rem;
+    display: none;
+  }
+  .culture-principles h4 {
+    font-size: 12px; font-weight: 700; color: var(--gray-500);
+    text-transform: uppercase; letter-spacing: 0.06em; margin-bottom: 0.5rem;
+  }
+  .culture-principles ul {
+    display: flex; flex-wrap: wrap; gap: 6px; list-style: none;
+  }
+  .culture-principles ul li {
+    font-size: 12px; padding: 3px 10px; border-radius: 12px;
+    background: var(--gray-100); color: var(--gray-700);
+  }
+
+  /* ── Info box ── */
+  .info-box {
+    background: #FFF8E1; border: 1.5px solid #FFE082;
+    border-radius: var(--radius); padding: 0.75rem 1rem;
+    font-size: 13px; color: #795548; line-height: 1.6;
+    margin-bottom: 1rem; display: flex; gap: 8px;
+  }
+  .info-box .icon { font-size: 16px; flex-shrink: 0; margin-top: 1px; }
+
+  /* ── Navigation ── */
+  .nav {
+    display: flex; justify-content: space-between; align-items: center;
+    margin-top: 2rem; padding-top: 1.25rem;
+    border-top: 1.5px solid var(--gray-200);
+  }
+  .btn {
+    padding: 9px 22px; border-radius: var(--radius);
+    font-family: inherit; font-size: 14px; font-weight: 600;
+    cursor: pointer; transition: all 0.15s; border: 1.5px solid var(--gray-300);
+    background: white; color: var(--gray-700);
+  }
+  .btn:hover { background: var(--gray-100); border-color: var(--gray-400); }
+  .btn.primary {
+    background: var(--navy); color: white; border-color: var(--navy);
+    padding: 10px 26px;
+  }
+  .btn.primary:hover { background: var(--blue); border-color: var(--blue); }
+  .btn.generate {
+    background: var(--teal); color: white; border-color: var(--teal);
+    padding: 10px 26px; font-size: 15px;
+  }
+  .btn.generate:hover { background: #00796B; border-color: #00796B; }
+
+  /* ── Summary ── */
+  .summary-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+  .summary-card {
+    background: white; border: 1.5px solid var(--gray-200);
+    border-radius: var(--radius-lg); padding: 1rem 1.1rem;
+    box-shadow: var(--shadow);
+  }
+  .summary-card h4 {
+    font-size: 11px; font-weight: 700; color: var(--gray-400);
+    text-transform: uppercase; letter-spacing: 0.07em; margin-bottom: 0.5rem;
+  }
+  .summary-card p { font-size: 13px; color: var(--black); line-height: 1.5; }
+  .summary-card.full { grid-column: 1 / -1; }
+  .pills { display: flex; flex-wrap: wrap; gap: 5px; margin-top: 6px; }
+  .pill {
+    font-size: 11px; padding: 2px 9px; border-radius: 10px;
+    background: var(--accent-light); color: var(--blue); font-weight: 500;
+  }
+
+  /* ── Output / prompt area ── */
+  .output-section { display: none; }
+  .output-section.show { display: block; animation: fadeIn 0.3s ease; }
+  .output-header {
+    background: var(--teal); color: white; border-radius: var(--radius-lg) var(--radius-lg) 0 0;
+    padding: 1rem 1.25rem;
+  }
+  .output-header h3 { font-size: 16px; font-weight: 700; margin-bottom: 3px; }
+  .output-header p { font-size: 13px; opacity: 0.8; }
+  .output-body {
+    background: white; border: 1.5px solid var(--gray-200);
+    border-top: none; border-radius: 0 0 var(--radius-lg) var(--radius-lg);
+    padding: 1.25rem;
+  }
+  .steps-list { counter-reset: steps; }
+  .steps-list li {
+    counter-increment: steps; list-style: none;
+    display: flex; gap: 12px; margin-bottom: 1rem; align-items: flex-start;
+  }
+  .steps-list li::before {
+    content: counter(steps);
+    min-width: 26px; height: 26px; border-radius: 50%;
+    background: var(--navy); color: white;
+    font-size: 12px; font-weight: 700; flex-shrink: 0;
+    display: flex; align-items: center; justify-content: center;
+  }
+  .steps-list li div { font-size: 14px; line-height: 1.6; color: var(--gray-700); padding-top: 3px; }
+  .steps-list li strong { color: var(--navy); }
+
+  .prompt-box {
+    background: var(--gray-50); border: 1.5px solid var(--gray-200);
+    border-radius: var(--radius); padding: 1rem;
+    font-family: 'SF Mono', 'Fira Code', monospace;
+    font-size: 12px; color: var(--gray-700); line-height: 1.7;
+    white-space: pre-wrap; word-break: break-word;
+    max-height: 320px; overflow-y: auto; margin: 1rem 0;
+  }
+  .copy-btn {
+    padding: 9px 20px; border-radius: var(--radius);
+    background: var(--navy); color: white; border: none;
+    font-family: inherit; font-size: 14px; font-weight: 600;
+    cursor: pointer; transition: background 0.15s;
+  }
+  .copy-btn:hover { background: var(--blue); }
+  .copy-btn.copied { background: var(--green); }
+
+  .option-cards { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 10px; margin: 1rem 0; }
+  .option-card {
+    background: var(--gray-50); border: 1.5px solid var(--gray-200);
+    border-radius: var(--radius); padding: 0.9rem;
+    text-align: center;
+  }
+  .option-card .icon-big { font-size: 24px; margin-bottom: 6px; }
+  .option-card h5 { font-size: 13px; font-weight: 700; color: var(--navy); margin-bottom: 4px; }
+  .option-card p { font-size: 12px; color: var(--gray-500); line-height: 1.5; }
+  .option-card a { color: var(--blue); text-decoration: none; font-weight: 600; }
+
+  @media (max-width: 600px) {
+    .grid2 { grid-template-columns: 1fr; }
+    .grid2 .full { grid-column: 1; }
+    .summary-grid { grid-template-columns: 1fr; }
+    .summary-card.full { grid-column: 1; }
+    .option-cards { grid-template-columns: 1fr; }
+  }
+</style>
+</head>
+<body>
+
+<header class="site-header">
+  <div class="logo">IP</div>
+  <div>
+    <h1>Interview Prep Agent</h1>
+    <p>Answer 9 questions — get a complete, tailored prep package</p>
+  </div>
+</header>
+
+<main class="main">
+
+  <!-- PROGRESS -->
+  <div class="progress-wrap">
+    <div class="progress-header">
+      <span class="progress-label" id="prog-label">Company and role</span>
+      <span class="progress-count" id="prog-count">Step 1 of 9</span>
+    </div>
+    <div class="progress-bar">
+      <div class="progress-fill" id="prog-fill" style="width:11%"></div>
+    </div>
+  </div>
+
+  <!-- ══ STEP 1: Company + Role ══════════════════════════════════════ -->
+  <div class="step active" id="s1">
+    <span class="step-badge">Step 1 of 9</span>
+    <h2 class="step-title">Company and role</h2>
+    <p class="step-sub">The basics every interviewer and recruiter will see first. The company name auto-detects the culture framework on the next step.</p>
+
+    <div class="field">
+      <label>Company you are interviewing at</label>
+      <input type="text" id="company" placeholder="e.g. Meta, Amazon, Stripe, Goldman Sachs" oninput="detectCulture()">
+      <div class="err" id="e-company">&#9888; Enter the company name</div>
+    </div>
+    <div class="field">
+      <label>Job title (exact)</label>
+      <input type="text" id="jobtitle" placeholder="e.g. Internal Audit Manager, Technology Infrastructure">
+      <div class="err" id="e-jobtitle">&#9888; Enter the job title</div>
+    </div>
+    <div class="field">
+      <label>Job description <span class="opt">paste key responsibilities or a summary</span></label>
+      <textarea id="jd" style="min-height:110px" placeholder="Paste or summarise the job description — the more detail the better calibrated your prep will be"></textarea>
+    </div>
+    <div class="grid2">
+      <div class="field">
+        <label>Hiring manager <span class="opt">if known</span></label>
+        <input type="text" id="hm" placeholder="e.g. Charu Chandra, Director Technology Infrastructure Audit">
+      </div>
+      <div class="field">
+        <label>Interview stage</label>
+        <select id="stage">
+          <option value="">Select stage</option>
+          <option>Phone screen</option>
+          <option>First round</option>
+          <option>Full loop (multiple rounds)</option>
+          <option>Final round</option>
+        </select>
+        <div class="err" id="e-stage">&#9888; Select the interview stage</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ══ STEP 2: Culture ══════════════════════════════════════════════ -->
+  <div class="step" id="s2">
+    <span class="step-badge">Step 2 of 9</span>
+    <h2 class="step-title">Company culture and values</h2>
+    <p class="step-sub">Culture questions come in every interview. The prep package maps your stories to the specific values framework this company uses.</p>
+
+    <div class="culture-box" id="culture-msg">Enter the company name on step 1 and the framework auto-loads.</div>
+    <div class="culture-principles" id="culture-preview">
+      <h4 id="culture-framework-name">Detected framework</h4>
+      <ul id="culture-list"></ul>
+    </div>
+
+    <div class="field" style="margin-top:1rem">
+      <label>Which values are being tested in this interview? <span class="opt">select all that apply</span></label>
+      <div class="tag-wrap" id="culture-tags"></div>
+    </div>
+    <div class="field">
+      <label>Culture signals from recruiter, JD, or prior interviews <span class="opt">optional</span></label>
+      <textarea id="culture-signals" placeholder="e.g. Recruiter emphasised bias for action and moving without perfect information; JD mentions cross-functional collaboration repeatedly"></textarea>
+    </div>
+    <div class="field">
+      <label>Your working style in 2–3 sentences</label>
+      <textarea id="work-style" placeholder="e.g. I tend to move quickly on ambiguous problems, build infrastructure that outlasts the immediate engagement, and partner with engineering teams as a technical peer rather than just an auditor"></textarea>
+    </div>
+  </div>
+
+  <!-- ══ STEP 3: Rounds ════════════════════════════════════════════════ -->
+  <div class="step" id="s3">
+    <span class="step-badge">Step 3 of 9</span>
+    <h2 class="step-title">Interview rounds</h2>
+    <p class="step-sub">Tell me who is interviewing you and what each round covers. The more signals you give me about each interviewer, the sharper the prep.</p>
+
+    <div id="rounds-container"></div>
+    <button class="add-btn" id="add-round-btn" onclick="addRound()">+ Add another round</button>
+    <div class="err" id="e-rounds">&#9888; Add at least one round</div>
+  </div>
+
+  <!-- ══ STEP 4: Background ════════════════════════════════════════════ -->
+  <div class="step" id="s4">
+    <span class="step-badge">Step 4 of 9</span>
+    <h2 class="step-title">Your background</h2>
+    <p class="step-sub">A snapshot of your career so every answer is calibrated to your actual experience level and specific work history.</p>
+
+    <div class="field">
+      <label>Current or most recent role and company</label>
+      <input type="text" id="current-role" placeholder="e.g. Senior Audit Lead, ByteDance/TikTok">
+      <div class="err" id="e-current-role">&#9888; Enter your most recent role</div>
+    </div>
+    <div class="grid2">
+      <div class="field">
+        <label>Years of total experience</label>
+        <select id="yoe">
+          <option value="">Select</option>
+          <option>0–2 years</option>
+          <option>3–5 years</option>
+          <option>6–9 years</option>
+          <option>10–13 years</option>
+          <option>14+ years</option>
+        </select>
+      </div>
+      <div class="field">
+        <label>Key certifications</label>
+        <input type="text" id="certs" placeholder="e.g. CISA, CAMS, CPA, CISSP, AAIA">
+      </div>
+    </div>
+    <div class="field">
+      <label>Prior employers <span class="opt">comma-separated</span></label>
+      <input type="text" id="employers" placeholder="e.g. Goldman Sachs, Deutsche Bank, Robinhood, ByteDance">
+    </div>
+    <div class="field">
+      <label>Core domain expertise <span class="opt">select all that apply</span></label>
+      <div class="tag-wrap" id="domains">
+        <span class="tag" onclick="toggle(this)">Technology audit</span>
+        <span class="tag" onclick="toggle(this)">AI / ML governance</span>
+        <span class="tag" onclick="toggle(this)">Financial crimes / AML</span>
+        <span class="tag" onclick="toggle(this)">Cyber / information security</span>
+        <span class="tag" onclick="toggle(this)">Privacy / GDPR / CCPA</span>
+        <span class="tag" onclick="toggle(this)">Crypto / blockchain</span>
+        <span class="tag" onclick="toggle(this)">Cloud infrastructure</span>
+        <span class="tag" onclick="toggle(this)">Data governance</span>
+        <span class="tag" onclick="toggle(this)">Risk management</span>
+        <span class="tag" onclick="toggle(this)">Operations audit</span>
+        <span class="tag" onclick="toggle(this)">Compliance / regulatory</span>
+        <span class="tag" onclick="toggle(this)">Internal controls / SOX</span>
+        <span class="tag" onclick="toggle(this)">Fintech / payments</span>
+        <span class="tag" onclick="toggle(this)">Sanctions / OFAC</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- ══ STEP 5: Domain Knowledge ═══════════════════════════════════════ -->
+  <div class="step" id="s5">
+    <span class="step-badge">Step 5 of 9</span>
+    <h2 class="step-title">Domain and technical knowledge</h2>
+    <p class="step-sub">The prep package includes a domain knowledge reference sheet — plain-English explanations, audit risks, specific tests, and the technical terms to use in the interview.</p>
+
+    <div class="field">
+      <label>Key technical systems, tools, or platforms relevant to this role</label>
+      <textarea id="tech-stack" placeholder="e.g. Llama 4, Llama Guard, FBLearner, PyTorch, MTIA chips, Kubernetes, AWS / GCP, Fireblocks, Chainalysis, Actimize, Workday, Tableau, Salesforce"></textarea>
+    </div>
+    <div class="field">
+      <label>Regulatory frameworks that apply <span class="opt">select all</span></label>
+      <div class="tag-wrap" id="regs">
+        <span class="tag" onclick="toggle(this)">GDPR</span>
+        <span class="tag" onclick="toggle(this)">CCPA</span>
+        <span class="tag" onclick="toggle(this)">PIPL</span>
+        <span class="tag" onclick="toggle(this)">NIST AI RMF</span>
+        <span class="tag" onclick="toggle(this)">NIST CSF 2.0</span>
+        <span class="tag" onclick="toggle(this)">ISO 27001</span>
+        <span class="tag" onclick="toggle(this)">SOX</span>
+        <span class="tag" onclick="toggle(this)">PCI DSS</span>
+        <span class="tag" onclick="toggle(this)">FFIEC</span>
+        <span class="tag" onclick="toggle(this)">NYDFS BitLicense</span>
+        <span class="tag" onclick="toggle(this)">FCPA</span>
+        <span class="tag" onclick="toggle(this)">UK Bribery Act</span>
+        <span class="tag" onclick="toggle(this)">Basel III / IV</span>
+        <span class="tag" onclick="toggle(this)">IIA Standards 2024</span>
+        <span class="tag" onclick="toggle(this)">MITRE ATT&amp;CK</span>
+        <span class="tag" onclick="toggle(this)">CIS Benchmarks</span>
+        <span class="tag" onclick="toggle(this)">FTC Consent Decree</span>
+        <span class="tag" onclick="toggle(this)">EU AI Act</span>
+      </div>
+    </div>
+    <div class="field">
+      <label>Audit methodologies and tools you use or will be expected to use</label>
+      <textarea id="audit-methods" placeholder="e.g. Risk-based audit planning, SQL analytical testing, full-population testing, continuous monitoring, IIA QAIP, STAR finding structure, RCM design, AI agent audit tools, Workiva, AuditBoard"></textarea>
+    </div>
+    <div class="field">
+      <label>Technical knowledge gaps you want the prep doc to fill</label>
+      <textarea id="knowledge-gaps" placeholder="e.g. I want a reference on how Llama Guard works technically; I want a cheat sheet on NIST AI RMF GOVERN / MEASURE functions; I want the audit test for cloud IAM over-privilege explained in plain English"></textarea>
+    </div>
+  </div>
+
+  <!-- ══ STEP 6: STAR Stories ═══════════════════════════════════════════ -->
+  <div class="step" id="s6">
+    <span class="step-badge">Step 6 of 9</span>
+    <h2 class="step-title">Your key STAR stories</h2>
+    <p class="step-sub">Add up to 5 career stories. Even rough notes are enough — I expand them into full structured STAR answers with senior manager language and quantified results.</p>
+
+    <div class="info-box">
+      <span class="icon">&#128161;</span>
+      <span>Use I DIRECTED / I ESCALATED / I MOBILISED / I DESIGNED in the situation notes — not "I did" or "we did". Results must have a number, a regulation, or a timeline.</span>
+    </div>
+
+    <div id="stories-container"></div>
+    <button class="add-btn" id="add-story-btn" onclick="addStory()">+ Add another story</button>
+    <div class="err" id="e-stories">&#9888; Add at least one story</div>
+  </div>
+
+  <!-- ══ STEP 7: Weakness + Lessons ════════════════════════════════════ -->
+  <div class="step" id="s7">
+    <span class="step-badge">Step 7 of 9</span>
+    <h2 class="step-title">Weakness and lessons learned</h2>
+    <p class="step-sub">Two questions most candidates blow. Be honest — the prep doc shapes your answer into something credible and forward-looking, not a confession.</p>
+
+    <div class="field">
+      <label>Your genuine weakness</label>
+      <textarea id="weakness" placeholder="e.g. I tend to want to build a solution before an engagement closes — I have learned to keep a separate notebook for systemic observations so I stay fully focused during fieldwork"></textarea>
+      <div class="err" id="e-weakness">&#9888; Describe your weakness</div>
+    </div>
+    <div class="field">
+      <label>Second weakness <span class="opt">optional — in case they ask for two</span></label>
+      <textarea id="weakness2" placeholder="e.g. I can be impatient with process that does not serve the outcome — I have learned to ask whether the process is protecting something I cannot see before pushing back"></textarea>
+    </div>
+    <div class="field">
+      <label>Most significant lesson learned in your career</label>
+      <textarea id="lesson" placeholder="e.g. At Robinhood I assumed a formally approved control library was accurate without testing the assumption — I now build an assumptions register at the start of every engagement so the load-bearing assumptions are visible and challengeable"></textarea>
+      <div class="err" id="e-lesson">&#9888; Describe a lesson learned</div>
+    </div>
+  </div>
+
+  <!-- ══ STEP 8: Questions + Concerns ══════════════════════════════════ -->
+  <div class="step" id="s8">
+    <span class="step-badge">Step 8 of 9</span>
+    <h2 class="step-title">Questions to ask and concerns to address</h2>
+    <p class="step-sub">The prep package includes calibrated questions for each interviewer. Add anything specific you already want to ask or address.</p>
+
+    <div class="field">
+      <label>Specific things you want to ask any interviewer <span class="opt">optional</span></label>
+      <textarea id="custom-q" placeholder="e.g. Ask the hiring manager about promotion timeline from L4 to L5; ask the technical interviewer about the data analytics stack audit uses; ask about H1B sponsorship timeline"></textarea>
+    </div>
+    <div class="field">
+      <label>Concerns about the role, company, or process <span class="opt">optional</span></label>
+      <textarea id="concerns" placeholder="e.g. Concerned about level calibration; want to understand whether the team does full-dataset testing or sampling; want to know the expected start date timeline given my immigration status"></textarea>
+    </div>
+    <div class="field">
+      <label>Anything about your background you want to pre-address or reframe <span class="opt">optional</span></label>
+      <textarea id="reframe" placeholder="e.g. I was laid off and want a clean confident way to address this; I have a gap in employment; my degree is in a different field and I want the nexus explained clearly"></textarea>
+    </div>
+  </div>
+
+  <!-- ══ STEP 9: Review ════════════════════════════════════════════════ -->
+  <div class="step" id="s9">
+    <span class="step-badge">Step 9 of 9</span>
+    <h2 class="step-title">Review and generate</h2>
+    <p class="step-sub">Confirm your details — then copy the prompt and paste it into Claude to build your complete prep package.</p>
+    <div class="summary-grid" id="summary"></div>
+  </div>
+
+  <!-- NAV -->
+  <div class="nav">
+    <button class="btn" id="back-btn" onclick="goBack()" style="display:none">&#8592; Back</button>
+    <div style="flex:1"></div>
+    <button class="btn primary" id="next-btn" onclick="goNext()">Continue &#8594;</button>
+  </div>
+
+  <!-- OUTPUT -->
+  <div class="output-section" id="output">
+    <div style="height:2rem"></div>
+    <div class="output-header">
+      <h3>&#10003; Your prep prompt is ready</h3>
+      <p>Copy it and paste it into Claude — your complete Excel prep package will be built automatically.</p>
+    </div>
+    <div class="output-body">
+      <div class="option-cards">
+        <div class="option-card">
+          <div class="icon-big">&#128203;</div>
+          <h5>Step 1 — Copy prompt</h5>
+          <p>Click the button below to copy your personalised prep prompt.</p>
+        </div>
+        <div class="option-card">
+          <div class="icon-big">&#129302;</div>
+          <h5>Step 2 — Open Claude</h5>
+          <p>Go to <a href="https://claude.ai" target="_blank">claude.ai</a> and start a new conversation.</p>
+        </div>
+        <div class="option-card">
+          <div class="icon-big">&#128196;</div>
+          <h5>Step 3 — Paste and send</h5>
+          <p>Paste the prompt, hit send, and Claude builds your full Excel prep package.</p>
+        </div>
+      </div>
+
+      <div class="prompt-box" id="prompt-output"></div>
+
+      <div style="display:flex;gap:10px;flex-wrap:wrap;align-items:center">
+        <button class="copy-btn" id="copy-btn" onclick="copyPrompt()">&#128203; Copy prompt to clipboard</button>
+        <button class="btn" onclick="goToStep(1)" style="font-size:13px">&#9998; Edit answers</button>
+      </div>
+
+      <div style="margin-top:1.5rem;padding-top:1rem;border-top:1.5px solid var(--gray-200)">
+        <p style="font-size:13px;color:var(--gray-500);line-height:1.6"><strong style="color:var(--navy)">What Claude will build:</strong> One tab per interview round with 8 likely questions + full STAR answers · Company culture mapping sheet · Domain knowledge reference with plain-English explanations and audit tests · STAR stories master with timing · Weakness and lessons answers · Calibrated questions to ask each interviewer · Print-ready cheat sheet.</p>
+      </div>
+    </div>
+  </div>
+
+</main>
+
+<script>
+const TOTAL = 9;
+let cur = 1;
+let roundCount = 0;
+let storyCount = 0;
+
+const STEP_NAMES = [
+  '', 'Company and role', 'Company culture', 'Interview rounds',
+  'Your background', 'Domain knowledge', 'STAR stories',
+  'Weakness and lessons', 'Questions and concerns', 'Review'
+];
+
+const CULTURES = {
+  meta: {
+    name: 'Meta core values',
+    all: ['Move Fast','Build Awesome Things','Focus on Long-Term Impact','Be Bold','Be Open','Build Social Value','Metamates — invest in colleagues'],
+    tags: ['Move Fast — bias for action, move without perfect info','Build Awesome Things — craft, quality, technical depth','Focus on Long-Term Impact — build things that outlast you','Be Bold — take big swings, accept the risk of failure','Be Open — share information broadly by default','Build Social Value — work serves a larger mission','Metamates — invest in colleagues, lift the team']
+  },
+  amazon: {
+    name: 'Amazon Leadership Principles (16)',
+    all: ['Customer Obsession','Ownership','Invent and Simplify','Are Right A Lot','Learn and Be Curious','Hire and Develop the Best','Insist on the Highest Standards','Think Big','Bias for Action','Frugality','Earn Trust','Dive Deep','Backbone / Disagree and Commit','Deliver Results','Strive to be Earth\'s Best Employer','Success and Scale Bring Broad Responsibility'],
+    tags: ['Customer Obsession — start with the customer, work backwards','Ownership — act like an owner, think long-term','Invent and Simplify — find simpler solutions, challenge status quo','Are Right A Lot — strong judgment, diverse perspectives','Bias for Action — speed matters, calculated risk','Dive Deep — detail-oriented, hands-on, data-driven','Backbone / Disagree and Commit — challenge respectfully then commit','Deliver Results — focus on key inputs and measurable outcomes','Earn Trust — honest, self-critical, open','Think Big — bold direction, different thinking']
+  },
+  google: {
+    name: 'Google core values',
+    all: ['Focus on the user','Do one thing really really well','Fast is better than slow','Data over opinion','Democracy on the web','Make money without doing evil','More information means more value','Information crosses all borders','Serious without a suit','Great just is not good enough'],
+    tags: ['User focus — every decision starts with the user','Do one thing well — depth over breadth','Speed — fast is better than slow','Data over opinion — decisions backed by evidence','Ethical and profitable — good and commercially successful','Global mindset — information crosses all borders','Relentless improvement — great just is not good enough']
+  },
+  goldman: {
+    name: 'Goldman Sachs Business Principles (14)',
+    all: ['Client interests always come first','Our assets are our people, capital and reputation','Professional quality','Creativity and imagination','Recruit the best','Opportunity to move ahead rapidly','Teamwork in everything','Dedication of people','Profits as key to success','Preserve our size as an asset','Anticipate client needs rapidly','Confidentiality as fiduciary obligation','Highly competitive environment','Integrity and honesty at the heart'],
+    tags: ['Client first — client interests above the firm\'s','Reputation — our asset is trust, not capital','Quality — relentless professional standard','Teamwork — individual success through collective effort','Integrity — honesty is non-negotiable','Confidentiality — protecting client information as fiduciary duty','Long-term thinking — preserve the franchise']
+  },
+  stripe: {
+    name: 'Stripe operating principles',
+    all: ['Move with urgency and focus','Think rigorously','Trust and amplify each other','Act like an owner','Global optimization'],
+    tags: ['Move with urgency and focus — speed and ruthless prioritisation','Think rigorously — first principles, deep analysis before acting','Trust and amplify — make colleagues more effective','Act like an owner — long-term, independent judgment','Global optimization — company over team, mission over ego']
+  },
+  jpmorgan: {
+    name: 'JPMorgan Chase values',
+    all: ['Exceptional client service','Operational excellence','Commitment to integrity, fairness and responsibility','Great team and winning culture'],
+    tags: ['Exceptional client service — client at the centre of every decision','Operational excellence — flawless execution at scale','Integrity and fairness — ethical foundation, non-negotiable','Winning culture — hire and retain the best, raise the bar']
+  },
+  microsoft: {
+    name: 'Microsoft culture model',
+    all: ['Growth mindset','Customer obsessed','Diverse and inclusive','One Microsoft','Making a difference'],
+    tags: ['Growth mindset — learn from failure, develop always','Customer obsessed — customer need drives every decision','Diverse and inclusive — diverse teams build better products','One Microsoft — collaborate across all boundaries','Making a difference — work has meaningful real-world impact']
+  },
+  apple: {
+    name: 'Apple values',
+    all: ['Accessibility','Education','Environment','Inclusion and Diversity','Privacy','Supplier Responsibility'],
+    tags: ['Privacy — deeply embedded in product and culture, non-negotiable','Accessibility — build for everyone, no exceptions','Inclusion and Diversity — strength through different perspectives','Environment — long-term sustainability embedded in decisions','Supplier Responsibility — extend Apple values through the supply chain']
+  }
+};
+
+const GENERIC_TAGS = [
+  'Bias for action','Customer obsession','Ownership and accountability',
+  'Integrity and ethics','Collaboration and teamwork','Innovation and creativity',
+  'Diversity and inclusion','Long-term thinking','Delivering results',
+  'Learning and growth mindset','Data-driven decisions','Operational excellence'
+];
+
+function detectCulture() {
+  const co = (document.getElementById('company').value || '').toLowerCase().trim();
+  let key = null;
+  if (co.includes('meta') || co.includes('facebook')) key = 'meta';
+  else if (co.includes('amazon') || co.includes('aws')) key = 'amazon';
+  else if (co.includes('google') || co.includes('deepmind') || co.includes('alphabet')) key = 'google';
+  else if (co.includes('goldman') || co.includes(' gs ')) key = 'goldman';
+  else if (co.includes('stripe')) key = 'stripe';
+  else if (co.includes('jpmorgan') || co.includes('jp morgan') || co.includes('chase')) key = 'jpmorgan';
+  else if (co.includes('microsoft')) key = 'microsoft';
+  else if (co.includes('apple')) key = 'apple';
+
+  const msg = document.getElementById('culture-msg');
+  const preview = document.getElementById('culture-preview');
+  const list = document.getElementById('culture-list');
+  const fname = document.getElementById('culture-framework-name');
+  const tagsEl = document.getElementById('culture-tags');
+
+  if (key) {
+    const c = CULTURES[key];
+    msg.textContent = 'Detected: ' + c.name + ' — your stories will be mapped to these principles in the prep package.';
+    msg.style.background = '#E8F5E9'; msg.style.borderColor = '#A5D6A7'; msg.style.color = '#1B5E20';
+    preview.style.display = 'block';
+    fname.textContent = c.name;
+    list.innerHTML = c.all.map(v => '<li>' + v + '</li>').join('');
+    tagsEl.innerHTML = c.tags.map(t => '<span class="tag" onclick="toggle(this)">' + t + '</span>').join('');
+  } else {
+    msg.textContent = co ? 'Company not in auto-detect library — select the values that best describe this company\'s culture.' : 'Enter the company name on step 1 and the framework auto-loads.';
+    msg.style.background = ''; msg.style.borderColor = ''; msg.style.color = '';
+    preview.style.display = 'none';
+    tagsEl.innerHTML = GENERIC_TAGS.map(t => '<span class="tag" onclick="toggle(this)">' + t + '</span>').join('');
+  }
+}
+
+function toggle(el) { el.classList.toggle('on'); }
+
+function getSelected(id) {
+  return [...document.querySelectorAll('#' + id + ' .tag.on')].map(t => t.textContent);
+}
+
+function addRound() {
+  if (roundCount >= 6) return;
+  roundCount++;
+  const c = document.getElementById('rounds-container');
+  const d = document.createElement('div');
+  d.className = 'block-card';
+  d.innerHTML = `
+    <div class="block-num">Round ${roundCount}</div>
+    <div class="grid2">
+      <div class="field">
+        <label>Interviewer name</label>
+        <input type="text" class="r-name" placeholder="e.g. Pushkar C.">
+      </div>
+      <div class="field">
+        <label>Interviewer title</label>
+        <input type="text" class="r-title" placeholder="e.g. Director, Internal Audit">
+      </div>
+      <div class="field full">
+        <label>Competency this round covers</label>
+        <input type="text" class="r-comp" placeholder="e.g. Cross-collaboration · Domain knowledge · Problem solving · Operating values">
+      </div>
+      <div class="field full">
+        <label>Signals about this interviewer <span class="opt">background, seniority, what they care about</span></label>
+        <textarea class="r-signal" style="min-height:64px" placeholder="e.g. CISA and CAMS certified, 20+ years experience, probes hard on finding defence and stakeholder management — or: technical peer, Manager Technology Audit, will test whether you can speak to engineers as a peer using specific technical terms"></textarea>
+      </div>
+    </div>`;
+  c.appendChild(d);
+  if (roundCount >= 6) document.getElementById('add-round-btn').style.display = 'none';
+}
+
+function addStory() {
+  if (storyCount >= 5) return;
+  storyCount++;
+  const c = document.getElementById('stories-container');
+  const d = document.createElement('div');
+  d.className = 'block-card';
+  d.innerHTML = `
+    <div class="block-num">Story ${storyCount}</div>
+    <div class="grid2">
+      <div class="field">
+        <label>Company</label>
+        <input type="text" class="s-co" placeholder="e.g. ByteDance">
+      </div>
+      <div class="field">
+        <label>Theme / what it demonstrates</label>
+        <input type="text" class="s-theme" placeholder="e.g. Bias for action · Technical depth">
+      </div>
+      <div class="field full">
+        <label>What happened — rough notes, 2–4 sentences</label>
+        <textarea class="s-sit" style="min-height:90px" placeholder="e.g. System access was blocked 10 days into a 4-region compliance audit with a fixed regulatory deadline. I made the call within 24 hours to pivot the methodology to available data. The pivot produced the most critical finding of the engagement — 23 accounts with zero application-layer MFA enforcement covering approximately 2.4 million EU records."></textarea>
+      </div>
+      <div class="field full">
+        <label>Key quantified result</label>
+        <input type="text" class="s-result" placeholder="e.g. Zero timeline extension · 23 accounts · 2.4M EU records · 14-day remediation vs 30-day SLA">
+      </div>
+      <div class="field full">
+        <label>Which culture value or leadership principle does this story best demonstrate? <span class="opt">optional</span></label>
+        <input type="text" class="s-principle" placeholder="e.g. Move Fast (Meta) · Bias for Action (Amazon) · Deliver Results · Dive Deep">
+      </div>
+    </div>`;
+  c.appendChild(d);
+  if (storyCount >= 5) document.getElementById('add-story-btn').style.display = 'none';
+}
+
+function validate() {
+  let ok = true;
+  const hide = id => { const el = document.getElementById(id); if (el) el.classList.remove('show'); };
+  const show = id => { const el = document.getElementById(id); if (el) el.classList.add('show'); };
+
+  if (cur === 1) {
+    hide('e-company'); hide('e-jobtitle'); hide('e-stage');
+    if (!document.getElementById('company').value.trim()) { show('e-company'); ok = false; }
+    if (!document.getElementById('jobtitle').value.trim()) { show('e-jobtitle'); ok = false; }
+    if (!document.getElementById('stage').value) { show('e-stage'); ok = false; }
+  }
+  if (cur === 3) {
+    hide('e-rounds');
+    if (roundCount === 0) { show('e-rounds'); ok = false; }
+  }
+  if (cur === 4) {
+    hide('e-current-role');
+    if (!document.getElementById('current-role').value.trim()) { show('e-current-role'); ok = false; }
+  }
+  if (cur === 6) {
+    hide('e-stories');
+    if (storyCount === 0) { show('e-stories'); ok = false; }
+  }
+  if (cur === 7) {
+    hide('e-weakness'); hide('e-lesson');
+    if (!document.getElementById('weakness').value.trim()) { show('e-weakness'); ok = false; }
+    if (!document.getElementById('lesson').value.trim()) { show('e-lesson'); ok = false; }
+  }
+  return ok;
+}
+
+function buildSummary() {
+  const rounds = [...document.querySelectorAll('#rounds-container .block-card')].map(b => ({
+    name: b.querySelector('.r-name').value,
+    title: b.querySelector('.r-title').value,
+    comp: b.querySelector('.r-comp').value,
+  }));
+  const stories = [...document.querySelectorAll('#stories-container .block-card')].map(b => ({
+    co: b.querySelector('.s-co').value,
+    theme: b.querySelector('.s-theme').value,
+    result: b.querySelector('.s-result').value,
+    principle: b.querySelector('.s-principle').value,
+  }));
+  const domains = getSelected('domains');
+  const regs = getSelected('regs');
+  const culture = getSelected('culture-tags');
+
+  document.getElementById('summary').innerHTML = `
+    <div class="summary-card full">
+      <h4>Role</h4>
+      <p><strong>${document.getElementById('company').value}</strong> — ${document.getElementById('jobtitle').value}</p>
+      <p style="font-size:12px;color:var(--gray-500);margin-top:3px">${document.getElementById('stage').value} · Hiring manager: ${document.getElementById('hm').value || 'not specified'}</p>
+    </div>
+    <div class="summary-card">
+      <h4>Culture values being tested</h4>
+      ${culture.length ? '<div class="pills">' + culture.map(c => '<span class="pill">' + c.split('—')[0].trim() + '</span>').join('') + '</div>' : '<p style="color:var(--gray-400)">Not specified</p>'}
+    </div>
+    <div class="summary-card">
+      <h4>${rounds.length} interview round${rounds.length !== 1 ? 's' : ''}</h4>
+      ${rounds.map(r => `<p style="font-size:13px;margin-bottom:3px"><strong>${r.name || 'Unnamed'}</strong>${r.title ? ' — ' + r.title : ''}: ${r.comp || '—'}</p>`).join('')}
+    </div>
+    <div class="summary-card">
+      <h4>Background</h4>
+      <p>${document.getElementById('current-role').value} · ${document.getElementById('yoe').value || '—'}</p>
+      ${domains.length ? '<div class="pills" style="margin-top:5px">' + domains.slice(0,6).map(d => '<span class="pill">' + d + '</span>').join('') + (domains.length > 6 ? '<span class="pill">+' + (domains.length - 6) + ' more</span>' : '') + '</div>' : ''}
+    </div>
+    <div class="summary-card">
+      <h4>Regulatory frameworks</h4>
+      ${regs.length ? '<div class="pills">' + regs.map(r => '<span class="pill">' + r + '</span>').join('') + '</div>' : '<p style="color:var(--gray-400)">Not specified</p>'}
+    </div>
+    <div class="summary-card">
+      <h4>${stories.length} STAR stor${stories.length !== 1 ? 'ies' : 'y'}</h4>
+      ${stories.map(s => `<p style="font-size:13px;margin-bottom:3px"><strong>${s.co || '—'}</strong> · ${s.theme || '—'}${s.principle ? ' · ' + s.principle : ''}: ${s.result || '—'}</p>`).join('')}
+    </div>
+  `;
+}
+
+function buildPrompt() {
+  const rounds = [...document.querySelectorAll('#rounds-container .block-card')].map((b, i) => ({
+    n: i + 1,
+    name: b.querySelector('.r-name').value,
+    title: b.querySelector('.r-title').value,
+    comp: b.querySelector('.r-comp').value,
+    signal: b.querySelector('.r-signal').value,
+  }));
+  const stories = [...document.querySelectorAll('#stories-container .block-card')].map((b, i) => ({
+    n: i + 1,
+    co: b.querySelector('.s-co').value,
+    theme: b.querySelector('.s-theme').value,
+    sit: b.querySelector('.s-sit').value,
+    result: b.querySelector('.s-result').value,
+    principle: b.querySelector('.s-principle').value,
+  }));
+  const domains = getSelected('domains');
+  const regs = getSelected('regs');
+  const culture = getSelected('culture-tags');
+
+  return `Please build a complete interview prep package as a downloadable Excel workbook.
+
+ROLE AND COMPANY
+================
+Company: ${document.getElementById('company').value}
+Job title: ${document.getElementById('jobtitle').value}
+Interview stage: ${document.getElementById('stage').value}
+Hiring manager: ${document.getElementById('hm').value || 'not specified'}
+Job description: ${document.getElementById('jd').value || 'not provided'}
+
+COMPANY CULTURE AND VALUES
+==========================
+Culture framework detected: ${document.getElementById('culture-framework-name').textContent}
+Values being tested: ${culture.join(' | ') || 'not specified'}
+Culture signals from recruiter / JD: ${document.getElementById('culture-signals').value || 'none'}
+Candidate working style: ${document.getElementById('work-style').value || 'not specified'}
+
+INTERVIEW ROUNDS
+================
+${rounds.map(r => `Round ${r.n}: ${r.name} (${r.title})
+  Competency: ${r.comp}
+  Interviewer signals: ${r.signal || 'none'}`).join('\n\n')}
+
+CANDIDATE BACKGROUND
+====================
+Current / recent role: ${document.getElementById('current-role').value}
+Years experience: ${document.getElementById('yoe').value || 'not specified'}
+Prior employers: ${document.getElementById('employers').value || 'not specified'}
+Certifications: ${document.getElementById('certs').value || 'not specified'}
+Domain expertise: ${domains.join(', ') || 'not specified'}
+
+DOMAIN AND TECHNICAL KNOWLEDGE
+================================
+Key technical systems / platforms: ${document.getElementById('tech-stack').value || 'not specified'}
+Regulatory frameworks: ${regs.join(', ') || 'not specified'}
+Audit methodologies / tools: ${document.getElementById('audit-methods').value || 'not specified'}
+Knowledge gaps to address in prep doc: ${document.getElementById('knowledge-gaps').value || 'none specified'}
+
+STAR STORIES (expand each into a full STAR answer)
+==================================================
+${stories.map(s => `Story ${s.n}
+  Company: ${s.co}
+  Theme: ${s.theme}
+  Culture principle this maps to: ${s.principle || 'not specified'}
+  Situation (rough notes): ${s.sit}
+  Quantified result: ${s.result}`).join('\n\n')}
+
+WEAKNESS AND LESSONS
+====================
+Primary weakness: ${document.getElementById('weakness').value}
+Second weakness: ${document.getElementById('weakness2').value || 'not provided'}
+Most significant lesson learned: ${document.getElementById('lesson').value}
+
+QUESTIONS AND CONCERNS
+======================
+Custom questions to ask interviewers: ${document.getElementById('custom-q').value || 'none'}
+Concerns to address in prep: ${document.getElementById('concerns').value || 'none'}
+Background to reframe: ${document.getElementById('reframe').value || 'none'}
+
+BUILD THIS EXCEL WORKBOOK WITH THE FOLLOWING TABS
+==================================================
+
+TAB: CHEAT SHEET (print-ready)
+One-page summary: role, culture framework, all stories with opener + result + culture principle, STAR timing (10sec opener / 25sec S+T / 50sec action / 25sec result), senior manager language do/don't table (I DIRECTED / I ESCALATED / I MOBILISED vs I did / We did), questions to ask at the end of each round.
+
+TAB: COMPANY CULTURE AND VALUES
+For each culture value or leadership principle being tested:
+(1) What the company means by it in plain English
+(2) The most likely question they will ask
+(3) A full STAR answer using one of the candidate's stories mapped to this principle — with quantified result and senior manager language
+(4) The key phrase to include that signals cultural alignment
+(5) What not to say / common mistakes candidates make on this value
+
+TAB: DOMAIN KNOWLEDGE REFERENCE
+For each technical system or platform listed:
+- What it is in plain English (no jargon)
+- How it works at a high level
+- The primary audit risk it presents
+- The specific audit test to apply
+- Technical terms to use in the interview
+
+For each regulatory framework selected:
+- What it requires in plain English
+- How it maps to the specific role
+- The article or section numbers to cite in the interview
+
+For each knowledge gap identified:
+- A concise primer filling the gap
+- Interview-ready language to use
+
+TAB PER INTERVIEW ROUND: One tab for each round named after the interviewer
+- Interviewer profile: who they are, what their background signals they care about, how to calibrate tone and depth
+- 8 most likely questions ranked by probability (3 stars / 2 stars / 1 star)
+- For each question: a full STAR answer using the candidate's stories — opening sentence (10 sec), situation + task (25 sec), action in senior manager language (50 sec), quantified result with number / regulation / timeline (25 sec)
+- Follow-up probes to be ready for after each answer
+- 3 calibrated questions to ask this interviewer at the end — personalised to their specific title and seniority, designed to signal the candidate thinks like someone already on the team
+
+TAB: STAR STORIES MASTER
+All stories expanded to full STAR format with:
+- Opening sentence (10 seconds)
+- Situation + task (25 seconds)
+- Action in senior manager language (50 seconds) — I DIRECTED / I ESCALATED / I MOBILISED / I DESIGNED
+- Quantified result (25 seconds) — number + regulation + timeline
+- Which culture principle this story maps to
+- Which rounds it fits best
+- Follow-up probes to be ready for
+
+TAB: WEAKNESS AND LESSONS
+For each weakness:
+- Opening sentence
+- The real impact it had
+- The specific process change made
+- Evidence it is working now
+- Timing (total 90 seconds)
+- What not to say
+
+For each lesson:
+- Opening sentence
+- What happened
+- What changed
+- How it shows up in current practice
+
+TAB: QUESTIONS TO ASK
+For each interviewer / round:
+- 3 calibrated questions ranked by impact
+- What each question signals to the interviewer
+- The candidate's custom questions where applicable
+
+STYLE REQUIREMENTS
+==================
+- Colour-code by round (one accent colour per tab)
+- Quantify every result — number, regulation, or timeline in every answer
+- Senior manager language throughout — I DIRECTED, I ESCALATED, I MOBILISED, I DESIGNED, I PRESENTED TO, I HELD THE POSITION — never "I did" or "we did"
+- Every answer should feel like it was written by a senior professional with 10+ years of experience, not a job seeker
+- STAR answers must stay within timing — opener 10 sec, S+T 25 sec, action 50 sec, result 25 sec
+- Include the regulatory citation or framework reference in every answer where applicable`;
+}
+
+function copyPrompt() {
+  const text = document.getElementById('prompt-output').textContent;
+  navigator.clipboard.writeText(text).then(() => {
+    const btn = document.getElementById('copy-btn');
+    btn.textContent = '✓ Copied!';
+    btn.classList.add('copied');
+    setTimeout(() => {
+      btn.textContent = '⧉ Copy prompt to clipboard';
+      btn.classList.remove('copied');
+    }, 2500);
+  }).catch(() => {
+    const box = document.getElementById('prompt-output');
+    box.focus();
+    const range = document.createRange();
+    range.selectNodeContents(box);
+    window.getSelection().removeAllRanges();
+    window.getSelection().addRange(range);
+    alert('Press Ctrl+A then Ctrl+C to copy the prompt');
+  });
+}
+
+function goToStep(n) {
+  document.getElementById('s' + cur).classList.remove('active');
+  cur = n;
+  document.getElementById('s' + cur).classList.add('active');
+  updateNav();
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+
+function updateNav() {
+  document.getElementById('prog-fill').style.width = Math.round((cur / TOTAL) * 100) + '%';
+  document.getElementById('prog-label').textContent = STEP_NAMES[cur];
+  document.getElementById('prog-count').textContent = 'Step ' + cur + ' of ' + TOTAL;
+  document.getElementById('back-btn').style.display = cur > 1 ? '' : 'none';
+  const btn = document.getElementById('next-btn');
+  if (cur === TOTAL) {
+    btn.textContent = 'Generate prep prompt ↓';
+    btn.className = 'btn generate';
+  } else {
+    btn.textContent = 'Continue →';
+    btn.className = 'btn primary';
+  }
+}
+
+function goNext() {
+  if (cur === TOTAL) {
+    buildSummary();
+    const prompt = buildPrompt();
+    document.getElementById('prompt-output').textContent = prompt;
+    document.getElementById('output').classList.add('show');
+    document.getElementById('next-btn').style.display = 'none';
+    document.getElementById('back-btn').textContent = '← Edit answers';
+    setTimeout(() => {
+      document.getElementById('output').scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }, 100);
+    return;
+  }
+  if (!validate()) return;
+  if (cur === 1) detectCulture();
+  if (cur === 2 && roundCount === 0) addRound();
+  if (cur === 5 && storyCount === 0) addStory();
+
+  document.getElementById('s' + cur).classList.remove('active');
+  cur++;
+  document.getElementById('s' + cur).classList.add('active');
+  updateNav();
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+
+function goBack() {
+  document.getElementById('output').classList.remove('show');
+  document.getElementById('next-btn').style.display = '';
+  document.getElementById('back-btn').textContent = '← Back';
+  document.getElementById('s' + cur).classList.remove('active');
+  cur--;
+  document.getElementById('s' + cur).classList.add('active');
+  updateNav();
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+
+// Init
+detectCulture();
+addRound();
+addStory();
+</script>
+</body>
+</html>
